@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <meta name="title" content="StructDiff: A Structure-Preserving and Spatially Controllable Diffusion Model for Single-Image Generation">
+  <meta name="description" content="StructDiff is a single-image diffusion framework that improves structure preservation and enables controllable generation through adaptive receptive fields and 3D positional encoding.">
+  <meta name="keywords" content="single-image generation, diffusion model, controllable generation, internal learning, positional encoding, structure preservation, IEEE TMM">
+  <meta name="author" content="Yinxi He, Kang Liao, Chunyu Lin, Tianyi Wei, Yao Zhao">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+
+  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="Butter-Crab.github.io">
+  <meta property="og:title" content="StructDiff: A Structure-Preserving and Spatially Controllable Diffusion Model for Single-Image Generation">
+  <meta property="og:description" content="Accepted by IEEE Transactions on Multimedia. StructDiff preserves structure in single-image generation and introduces PE-based spatial control.">
+  <meta property="og:url" content="https://butter-crab.github.io/StructDiff/">
+  <meta property="og:image" content="https://butter-crab.github.io/StructDiff/static/images/social_preview.webp">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="StructDiff project preview">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="StructDiff">
+  <meta name="twitter:description" content="A structure-preserving and spatially controllable diffusion model for single-image generation.">
+  <meta name="twitter:image" content="https://butter-crab.github.io/StructDiff/static/images/social_preview.webp">
+
+  <meta name="citation_title" content="StructDiff: A Structure-Preserving and Spatially Controllable Diffusion Model for Single-Image Generation">
+  <meta name="citation_author" content="He, Yinxi">
+  <meta name="citation_author" content="Liao, Kang">
+  <meta name="citation_author" content="Lin, Chunyu">
+  <meta name="citation_author" content="Wei, Tianyi">
+  <meta name="citation_author" content="Zhao, Yao">
+  <meta name="citation_publication_date" content="2026">
+  <meta name="citation_conference_title" content="IEEE Transactions on Multimedia">
+  <meta name="citation_pdf_url" content="https://butter-crab.github.io/StructDiff/static/pdfs/structdiff_paper.pdf">
+
+  <meta name="theme-color" content="#2563eb">
+  <meta name="msapplication-TileColor" content="#2563eb">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+
+  <title>StructDiff | Project Page</title>
+
+  <link rel="stylesheet" href="static/css/bulma.min.css">
+  <link rel="stylesheet" href="static/css/index.css">
+  <link rel="preload" href="static/css/fontawesome.all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+  <link rel="preload" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+
+  <noscript>
+    <link rel="stylesheet" href="static/css/fontawesome.all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  </noscript>
+
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <script defer src="static/js/fontawesome.all.min.js"></script>
+  <script defer src="static/js/index.js"></script>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "ScholarlyArticle",
+    "headline": "StructDiff: A Structure-Preserving and Spatially Controllable Diffusion Model for Single-Image Generation",
+    "description": "StructDiff is a single-image diffusion framework with adaptive receptive fields and 3D positional encoding for structure-preserving and spatially controllable generation.",
+    "author": [
+      {"@type": "Person", "name": "Yinxi He"},
+      {"@type": "Person", "name": "Kang Liao"},
+      {"@type": "Person", "name": "Chunyu Lin"},
+      {"@type": "Person", "name": "Tianyi Wei"},
+      {"@type": "Person", "name": "Yao Zhao"}
+    ],
+    "datePublished": "2026-04-13",
+    "publisher": {
+      "@type": "Organization",
+      "name": "IEEE Transactions on Multimedia"
+    },
+    "url": "https://butter-crab.github.io/StructDiff/",
+    "image": "https://butter-crab.github.io/StructDiff/static/images/social_preview.webp",
+    "keywords": [
+      "single-image generation",
+      "diffusion model",
+      "controllable generation",
+      "internal learning",
+      "structure preservation"
+    ],
+    "isAccessibleForFree": true
+  }
+  </script>
+
+  <style>
+    /* ===== Base page styles ===== */
+    body {
+      background: #fcfcfd;
+      color: #0f172a;
+    }
+
+    #main-content {
+      padding-top: 72px;
+    }
+
+    /* ===== Fixed top navigation ===== */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(56, 189, 248, 0.18);
+      box-shadow: 0 10px 30px -24px rgba(15, 23, 42, 0.35);
+    }
+
+    .site-nav {
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: #0f172a;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      font-size: 1.15rem;
+      text-decoration: none;
+    }
+
+    .brand-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      object-fit: cover;
+      box-shadow: 0 8px 20px -16px rgba(15, 23, 42, 0.5);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: #475569;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 1.04rem;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #0f172a;
+    }
+
+    .nav-links .nav-cta {
+      padding: 0.8rem 1.3rem;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #38bdf8 0%, #0ea5e9 100%);
+      color: #ffffff;
+      box-shadow: 0 18px 30px -20px rgba(14, 165, 233, 0.9);
+    }
+
+    .nav-links .nav-cta:hover {
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* ===== Hero / first screen ===== */
+    .hero-gradient {
+      background: transparent;
+      border-bottom: none;
+    }
+
+    .hero-cover {
+      position: relative;
+      min-height: auto;
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .hero-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(180deg, rgba(15, 23, 42, 0.1), rgba(15, 23, 42, 0.34)),
+        url("static/images/teaser.webp");
+      background-position: center;
+      background-size: cover;
+      filter: blur(18px) saturate(1.05) brightness(0.78);
+      transform: scale(1.08);
+      z-index: -2;
+    }
+
+    .hero-cover::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at center, rgba(255, 255, 255, 0.08), transparent 35%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(15, 23, 42, 0.16));
+      z-index: -1;
+    }
+
+    .hero-cover .hero-body {
+      padding: clamp(5rem, 8vw, 7rem) 1.5rem clamp(4rem, 7vw, 6rem);
+      width: 100%;
+    }
+
+    .hero-cover .container.is-max-desktop {
+      max-width: 1520px !important;
+    }
+
+    .hero-cover .page-intro {
+      position: relative;
+      z-index: 1;
+    }
+
+    .page-intro {
+      max-width: 1320px;
+      margin: 0 auto;
+    }
+
+    /* ===== Shared section headings and intro text ===== */
+    .section-intro {
+      color: #475569;
+      margin: 0 auto 1.5rem;
+      font-size: 1.12rem;
+      line-height: 1.85;
+      max-width: 1080px;
+    }
+
+    .section-title {
+      position: relative;
+      display: block;
+      margin-bottom: 1.6rem !important;
+      font-size: clamp(2.2rem, 3.5vw, 3rem) !important;
+      letter-spacing: -0.04em;
+      color: #0f172a;
+    }
+
+    .section-title::after {
+      content: "";
+      display: block;
+      width: 84px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #8b5cf6 0%, #ec4899 100%);
+      margin: 0.95rem auto 0;
+    }
+
+    /* ===== Reusable cards / figure containers ===== */
+    .section-card {
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+      padding: 0;
+      height: auto;
+    }
+
+    .method-layout,
+    .method-card,
+    .results-layout,
+    .results-card--wide,
+    .results-card--narrow,
+    .applications-card--main,
+    .evaluation-card--samples {
+      max-width: 1040px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .method-card + .method-card {
+      margin-top: 1.5rem;
+    }
+
+    .results-card + .results-card {
+      margin-top: 1.5rem;
+    }
+
+    .results-card-title {
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin: 0 0 0.9rem;
+      text-align: center;
+    }
+
+    .evaluation-layout {
+      max-width: 1280px;
+      margin: 0 auto;
+    }
+
+    .evaluation-prompt-layout {
+      display: grid;
+      grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.35fr);
+      gap: 1.2rem;
+      align-items: start;
+    }
+
+    .evaluation-prompt-media {
+      width: 100%;
+      max-width: 640px;
+      margin-left: 0;
+      justify-self: start;
+    }
+
+    .evaluation-card--prompt,
+    .evaluation-card--samples {
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .evaluation-prompt-info .results-subintro {
+      margin-bottom: 1rem;
+    }
+
+    .evaluation-prompt-info .figure-note {
+      margin-top: 0;
+    }
+
+    .subsection-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      margin-bottom: 0.85rem;
+      flex-wrap: wrap;
+    }
+
+    .subsection-header .results-subtitle {
+      margin-bottom: 0;
+    }
+
+    .results-subsection + .results-subsection {
+      margin-top: 2.5rem;
+    }
+
+    .results-subtitle {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: left;
+      margin: 0 0 0.85rem;
+    }
+
+    .results-subintro {
+      max-width: none;
+      margin: 0 0 1.35rem;
+      text-align: left;
+      color: #475569;
+      font-size: 1rem;
+      line-height: 1.8;
+    }
+
+    .figure-link {
+      display: block;
+      border-radius: 10px;
+      overflow: hidden;
+      background: transparent;
+      cursor: zoom-in;
+    }
+
+    .figure-link:hover {
+      transform: translateY(-2px);
+      transition: transform 0.25s ease;
+    }
+
+    .research-image {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      display: block;
+      box-shadow: none;
+    }
+
+    .image-lightbox {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      z-index: 1000;
+    }
+
+    .image-lightbox.is-active {
+      display: flex;
+    }
+
+    .image-lightbox__backdrop {
+      position: absolute;
+      inset: 0;
+      border: 0;
+      background: rgba(15, 23, 42, 0.82);
+      cursor: zoom-out;
+    }
+
+    .image-lightbox__dialog {
+      position: relative;
+      z-index: 1;
+      width: min(1200px, calc(100vw - 3rem));
+      max-height: calc(100vh - 3rem);
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      align-items: center;
+    }
+
+    .image-lightbox__toolbar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      color: rgba(255, 255, 255, 0.86);
+      font-size: 0.92rem;
+    }
+
+    .image-lightbox__hint {
+      margin: 0;
+      line-height: 1.5;
+    }
+
+    .image-lightbox__controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      flex-shrink: 0;
+    }
+
+    .image-lightbox__control {
+      min-width: 2.5rem;
+      height: 2.5rem;
+      border: 0;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+      font-size: 1rem;
+      font-weight: 700;
+      line-height: 1;
+      cursor: pointer;
+      backdrop-filter: blur(8px);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 0.85rem;
+    }
+
+    .image-lightbox__control--reset {
+      min-width: 4.4rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+
+    .image-lightbox__viewport {
+      width: 100%;
+      max-height: calc(100vh - 10rem);
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      cursor: zoom-in;
+      touch-action: none;
+    }
+
+    .image-lightbox__viewport.is-zoomed {
+      cursor: grab;
+    }
+
+    .image-lightbox__viewport.is-dragging {
+      cursor: grabbing;
+    }
+
+    .image-lightbox__image {
+      max-width: 100%;
+      max-height: calc(100vh - 7.5rem);
+      width: auto;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
+      background: #fff;
+      transform-origin: center center;
+      will-change: transform;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    .image-lightbox__caption {
+      margin: 0;
+      color: rgba(255, 255, 255, 0.88);
+      text-align: center;
+      font-size: 0.98rem;
+      line-height: 1.6;
+      max-width: 920px;
+    }
+
+    body.lightbox-open {
+      overflow: hidden;
+    }
+
+    .figure-note {
+      margin-top: 0.85rem;
+      color: #475569;
+      font-size: 0.97rem;
+    }
+
+    .bibtex-box {
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 16px;
+      padding: 1.25rem;
+      overflow-x: auto;
+    }
+
+    .bibtex-header {
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .bibtex-header .section-title {
+      margin-bottom: 0.8rem !important;
+    }
+
+    .bibtex-header .section-title::after {
+      margin-left: 0;
+      margin-right: auto;
+    }
+
+    /* ===== Hero copy, author lines, and CTA buttons ===== */
+    .hero-copy {
+      color: rgba(255, 255, 255, 0.95);
+      max-width: 980px;
+      margin: 1.8rem auto 1.6rem;
+      font-size: 1.18rem;
+      line-height: 1.95;
+      text-shadow: 0 10px 22px rgba(15, 23, 42, 0.35);
+    }
+
+    .hero-meta-stack {
+      max-width: 1100px;
+      margin: 1rem auto 0;
+      display: grid;
+      gap: 0.1rem;
+    }
+
+    .hero-authors-line {
+      font-size: 1.42rem;
+      font-weight: 600;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.96);
+      text-shadow: 0 8px 20px rgba(15, 23, 42, 0.28);
+    }
+
+    .hero-orgs-line {
+      font-size: 1.42rem;
+      line-height: 1.35;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .affiliation-row {
+      display: block;
+    }
+
+    .affil-sup {
+      font-size: 0.72em;
+      font-weight: 700;
+      vertical-align: super;
+      margin-left: 0.08em;
+    }
+
+    .hero-venue-line {
+      font-size: 1rem;
+      line-height: 1.7;
+      color: rgba(255, 255, 255, 0.82);
+      letter-spacing: 0.01em;
+    }
+
+    .hero-actions {
+      width: min(960px, 100%);
+      margin: 0.75rem auto 0;
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      gap: 0.6rem;
+    }
+
+    .hero-actions .link-block {
+      margin: 0;
+      flex: 1 1 0;
+      max-width: none;
+      min-width: 0;
+    }
+
+    .hero-actions .link-block a {
+      margin: 0 !important;
+      width: 100%;
+      justify-content: center;
+      font-size: 1.04rem !important;
+      padding: 0.9rem 1.15rem !important;
+    }
+
+    .hero-actions .button {
+      background: rgba(255, 255, 255, 0.14) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.3) !important;
+      box-shadow: 0 20px 34px -24px rgba(15, 23, 42, 0.7) !important;
+      backdrop-filter: blur(14px);
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+
+    .hero-actions .button:hover {
+      background: rgba(255, 255, 255, 0.2) !important;
+      border-color: rgba(255, 255, 255, 0.5) !important;
+      color: #ffffff !important;
+    }
+
+    .hero-actions .button.is-primary-soft {
+      background: rgba(14, 165, 233, 0.55) !important;
+      color: #ffffff !important;
+      border-color: rgba(125, 211, 252, 0.65) !important;
+    }
+
+    .hero-actions .button.is-primary-soft:hover {
+      background: rgba(14, 165, 233, 0.7) !important;
+      color: #ffffff !important;
+      border-color: rgba(186, 230, 253, 0.82) !important;
+    }
+
+    /* Hero title styling */
+    .publication-title {
+      font-size: clamp(3.0rem, 5vw, 4.5rem) !important;
+      max-width: 1240px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 3.0rem !important;
+      letter-spacing: -0.05em;
+      line-height: 1.1 !important;
+      color: #ffffff !important;
+      text-shadow: 0 10px 30px rgba(15, 23, 42, 0.38);
+    }
+
+    .hero-accent {
+      background: linear-gradient(135deg, #0ea5e9 0%, #22d3ee 50%, #34d399 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      text-shadow: none;
+    }
+
+    /* ===== Shared text sizing inside content blocks ===== */
+    .section {
+      padding-top: 4.5rem;
+      padding-bottom: 4.5rem;
+    }
+
+    .content.has-text-justified {
+      font-size: 1.04rem;
+      line-height: 1.85;
+    }
+
+    .content.has-text-justified {
+      max-width: 980px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .footer-note {
+      color: #64748b;
+    }
+
+    /* ===== Mobile overrides ===== */
+    @media screen and (max-width: 768px) {
+      #main-content {
+        padding-top: 64px;
+      }
+
+      .site-nav {
+        padding: 0.85rem 1rem;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .nav-links {
+        gap: 0.9rem 1rem;
+      }
+
+      .hero-cover .hero-body {
+        padding: 4.25rem 1rem 3.2rem;
+      }
+
+      .hero-copy {
+        font-size: 1rem;
+      }
+
+      .subsection-header {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .evaluation-prompt-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-authors-line {
+        font-size: 1.1rem;
+      }
+
+      .hero-orgs-line {
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        flex-wrap: wrap;
+        gap: 0.7rem;
+      }
+
+      .hero-actions .link-block {
+        flex-basis: calc(50% - 0.4rem);
+      }
+
+      .publication-title {
+        font-size: clamp(2.5rem, 10vw, 4rem) !important;
+      }
+
+      .bibtex-header {
+        flex-direction: column;
+      }
+
+      .image-lightbox {
+        padding: 1rem;
+      }
+
+      .image-lightbox__toolbar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .image-lightbox__controls {
+        justify-content: flex-end;
+      }
+
+      .image-lightbox__hint {
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="scroll-to-top" onclick="scrollToTop()" title="Scroll to top" aria-label="Scroll to top">
+    <i class="fas fa-chevron-up"></i>
+  </button>
+
+  <!-- Top navigation: brand + anchor links to key sections -->
+  <header class="site-header">
+    <nav class="site-nav">
+      <a href="#main-content" class="brand">
+        <span>StructDiff</span>
+      </a>
+      <div class="nav-links">
+        <a href="#teaser">Overview</a>
+        <a href="#abstract">Abstract</a>
+        <a href="#method">Method</a>
+        <a href="#results">Results</a>
+        <a href="#llm-evaluation">LLM Eval</a>
+        <a href="#applications">Applications</a>
+        <a href="#BibTeX">BibTeX</a>
+        <a href="static/pdfs/structdiff_paper.pdf" target="_blank" class="nav-cta">Paper</a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main-content">
+    <!-- Hero: title, authors, affiliations, short summary, and quick action buttons -->
+    <section class="hero hero-gradient hero-cover">
+      <div class="hero-body">
+        <div class="container is-max-desktop has-text-centered">
+          <div class="page-intro">
+            <h1 class="title is-1 publication-title"><span class="hero-accent">StructDiff:</span> A Structure-Preserving and Spatially Controllable Diffusion Model for Single-Image Generation</h1>
+            <div class="hero-meta-stack">
+              <div class="is-size-5 publication-authors hero-authors-line">
+                <span class="author-block">Yinxi He<sup class="affil-sup">1</sup>,</span>
+                <span class="author-block">Kang Liao<sup class="affil-sup">2</sup>,</span>
+                <span class="author-block">Chunyu Lin<sup class="affil-sup">1</sup>,</span>
+                <span class="author-block">Tianyi Wei<sup class="affil-sup">2</sup>,</span>
+                <span class="author-block">Yao Zhao<sup class="affil-sup">1</sup></span>
+              </div>
+              <div class="is-size-5 publication-authors hero-orgs-line">
+                <span class="affiliation-row"><sup class="affil-sup">1</sup> Beijing Jiaotong University</span>
+                <span class="affiliation-row"><sup class="affil-sup">2</sup> Nanyang Technological University</span>
+              </div>
+              <div class="hero-venue-line">Accepted by IEEE Transactions on Multimedia 2026</div>
+            </div>
+            <p class="hero-copy">
+              StructDiff is a single-image diffusion framework that improves structural preservation with adaptive receptive fields
+              and introduces 3D positional encoding for controllable generation, editing, and layout manipulation.
+            </p>
+
+            <div class="publication-links hero-actions">
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2604.12575" target="_blank" class="external-link button is-normal is-rounded is-dark is-primary-soft">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper PDF</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2604.12575" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://github.com/Butter-Crab/StructDiff" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>GitHub</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://huggingface.co/datasets/ButterCrab0122/Mulmini-NL" target="_blank" class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-database"></i></span>
+                  <span>Dataset</span>
+                </a>
+              </span>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Overview / teaser figure -->
+    <section class="section" id="teaser">
+      <div class="container is-max-desktop">
+        <h2 class="title is-3 has-text-centered section-title">Overview</h2>
+        <p class="section-intro has-text-centered">
+          StructDiff learns internal statistics from a single natural image and supports both diverse generation and controllable
+          editing without retraining. Our results are illustrated as follows.
+        </p>
+        <div class="section-card">
+          <a class="figure-link" href="static/images/teaser.webp" target="_blank">
+            <img src="static/images/teaser.webp" alt="StructDiff teaser figure" class="research-image" loading="lazy">
+          </a>
+          <p class="figure-note">
+            StructDiff enables diverse generation at arbitrary scales, PE-guided spatial control, mask-guided local deformations,
+            and downstream applications such as image editing and outpainting.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Abstract section -->
+    <section class="section hero is-light" id="abstract">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column is-four-fifths">
+            <h2 class="title is-3 has-text-centered section-title">Abstract</h2>
+            <div class="content has-text-justified">
+              <p>
+                This paper introduces StructDiff, a generative framework based on a single-scale diffusion model for single-image generation. 
+                Single-image generation aims to synthesize diverse samples with similar visual content to the source image by capturing its 
+                internal statistics, without relying on external data. However, existing methods often struggle to preserve the structural layout,
+                 especially for images with large rigid objects or strict spatial constraints. Moreover, most approaches lack spatial controllability, 
+                 making it difficult to guide the structure or placement of generated content. To address these challenges, StructDiff introduces an 
+                 adaptive receptive field module to maintain both global and local distributions. Building on this foundation, StructDiff incorporates 
+                 3D positional encoding (PE) as a spatial prior, allowing flexible control over positions, scale, and local details of generated objects. 
+                 To our knowledge, this spatial control capability represents the first exploration of PE-based manipulation in single-image generation. 
+                 Furthermore, we propose a novel evaluation criterion for single-image generation based on large language models (LLMs). This criterion 
+                 specifically addresses the limitations of existing objective metrics and the high labor costs associated with user studies. StructDiff 
+                 also demonstrates broad applicability across downstream tasks, such as text-guided image generation, image editing, outpainting, and 
+                 paint-to-image synthesis. Extensive experiments demonstrate that StructDiff outperforms existing methods in structural consistency, 
+                 visual quality, and spatial controllability.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Method section: pipeline and architecture comparison -->
+    <section class="section" id="method">
+      <div class="container method-layout">
+        <h2 class="title is-3 has-text-centered section-title">Method</h2>
+        <p class="section-intro has-text-centered">
+          The method section below combines the architectural comparison figure and the full pipeline overview from the paper.
+        </p>
+        <div class="section-card method-card">
+          <a class="figure-link" href="static/images/architectural_comparison.webp" target="_blank">
+            <img src="static/images/architectural_comparison.webp" alt="Architectural comparison for single-image generation" class="research-image" loading="lazy">
+          </a>
+          <p class="figure-note">
+            Compared with multi-scale and fixed single-scale paradigms, StructDiff keeps a single-scale architecture while
+            dynamically adapting the perceptual scope to the image content.
+          </p>
+        </div>
+        <div class="section-card method-card">
+          <a class="figure-link" href="static/images/pipeline1.webp" target="_blank">
+            <img src="static/images/pipeline1.webp" alt="StructDiff pipeline" class="research-image" loading="lazy">
+          </a>
+          <p class="figure-note">
+            The full pipeline includes ARF blocks, Fourier-embedded positional encodings, and two generation modes:
+            default random sampling and controllable generation guided by customized positional encodings.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results section: default sampling and PE-guided control -->
+    <section class="section hero is-light" id="results">
+      <div class="container results-layout">
+        <h2 class="title is-3 has-text-centered section-title">Results</h2>
+        <p class="section-intro has-text-centered">
+          This section summarizes both StructDiff's diverse generation results under default sampling and its
+          positional-encoding-driven controllable generation results.
+        </p>
+
+        <div class="results-subsection">
+          <h3 class="results-subtitle">Diverse Generation Results (Default Sampling)</h3>
+          <p class="results-subintro">
+            Qualitative comparisons on Mulmini-L and Mulmini-N show that StructDiff generates diverse samples while preserving
+            large structures, local details, and overall realism more faithfully than competing single-image generation methods.
+            Click each figure to open an enlarged in-page preview for a clearer inspection of structural details and method differences.
+          </p>
+          <div class="columns is-variable is-5 results-card">
+            <div class="column is-6">
+              <div class="section-card">
+                <h3 class="results-card-title">Mulmini-L</h3>
+                <a class="figure-link" href="static/images/random_samples_Mulmini_L.webp" target="_blank">
+                  <img src="static/images/random_samples_Mulmini_L.webp" alt="Random samples comparison on Mulmini-L" class="research-image" loading="lazy">
+                </a>
+                <p class="figure-note">
+                  Partial qualitative comparison on Mulmini-L. StructDiff preserves large object structure and image realism more
+                  faithfully than competing single-image generation methods.
+                </p>
+              </div>
+            </div>
+            <div class="column is-6">
+              <div class="section-card">
+                <h3 class="results-card-title">Mulmini-N</h3>
+                <a class="figure-link" href="static/images/random_samples_Mulmini_N.webp" target="_blank">
+                  <img src="static/images/random_samples_Mulmini_N.webp" alt="Random samples comparison on Mulmini-N" class="research-image" loading="lazy">
+                </a>
+                <p class="figure-note">
+                  Partial qualitative comparison on Mulmini-N. StructDiff maintains stronger structural consistency and more stable
+                  local details across diverse natural image categories.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-subsection">
+          <h3 class="results-subtitle">Positional-Encoding-Driven Results</h3>
+          <p class="results-subintro">
+            By injecting customized positional encodings, StructDiff supports controllable generation and localized editing while
+            maintaining structural coherence and visual consistency. Click each figure to open an enlarged in-page preview for a clearer view of the
+            position control and local editing effects.
+          </p>
+          <div class="section-card results-card results-card--wide">
+            <a class="figure-link" href="static/images/con1.webp" target="_blank">
+              <img src="static/images/con1.webp" alt="Spatially controllable generation" class="research-image" loading="lazy">
+            </a>
+            <p class="figure-note">
+              Qualitative comparison of spatially controllable generation. StructDiff produces sharper edges and stronger
+              background consistency under position control.
+            </p>
+          </div>
+
+          <div class="section-card results-card results-card--narrow">
+            <a class="figure-link" href="static/images/con2.webp" target="_blank">
+              <img src="static/images/con2.webp" alt="Fine-grained local control" class="research-image" loading="lazy">
+            </a>
+            <p class="figure-note">
+              Fine-grained control through mask modification. StructDiff enables localized semantic edits while preserving the
+              overall facial layout and image realism.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LLM-based evaluation prompt and score-level examples -->
+    <section class="section" id="llm-evaluation">
+      <div class="container evaluation-layout">
+        <h2 class="title is-3 has-text-centered section-title">LLM Evaluation</h2>
+        <p class="section-intro has-text-centered">
+          To make the GPT-4o-based quality assessment more transparent, we provide the complete evaluation prompt together with
+          representative examples for different score levels.
+        </p>
+
+        <div class="results-subsection">
+          <div class="section-card evaluation-card--prompt">
+            <div class="evaluation-prompt-layout">
+              <div class="evaluation-prompt-info">
+                <div class="subsection-header">
+                  <h3 class="results-subtitle">Complete Prompt and 5/5 Example</h3>
+                  <button class="copy-bibtex-btn" onclick="copyPromptText(this)" title="Copy the full GPT-4o evaluation prompt">
+                    <i class="fas fa-copy"></i>
+                    <span class="copy-text">Copy Full Prompt</span>
+                  </button>
+                </div>
+                <p class="results-subintro">
+                  The figure on the right contains the complete GPT-4o evaluation prompt together with a representative 5-point
+                  example. Click the image to open an enlarged in-page preview for easier reading, or use the button to copy the full prompt text.
+                </p>
+              </div>
+              <div class="evaluation-prompt-media">
+                <a class="figure-link" href="static/images/su4.webp" target="_blank">
+                  <img src="static/images/su4.webp" alt="Complete GPT-4o evaluation prompt and 5-point example" class="research-image" loading="lazy">
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="results-subsection">
+          <div class="section-card evaluation-card--samples">
+            <h3 class="results-subtitle">Score-Level Examples (1-4 Points)</h3>
+            <p class="results-subintro">
+              These examples illustrate how the same prompt distinguishes outputs from 1 to 4 points under different levels of
+              visual quality and structural distortion. Click the image to open an enlarged in-page preview for easier comparison.
+            </p>
+            <a class="figure-link" href="static/images/su5.webp" target="_blank">
+              <img src="static/images/su5.webp" alt="GPT-4o score-level examples from 1 to 4 points" class="research-image" loading="lazy">
+            </a>
+            <p class="figure-note">
+              The figure presents representative cases scored from 1 to 4, showing how GPT-4o penalizes blur, artifacts, warping,
+              and broken structural continuity while rewarding realistic geometry and visual clarity.
+            </p>
+          </div>
+        </div>
+
+        <textarea id="llm-prompt-text" hidden>Evaluation Prompt
+I need you to become an image evaluation evaluator for a set of generated images. The evaluation should be objective and impartial, giving specific ratings and reasons. This evaluation includes the following two aspects:
+
+Generation Quality (2 points)
+Score 2: The images are well-generated, with smooth visual appeal.
+Score 1: The images are passable but have minor issues such as slight blurring.
+Score 0: The images suffer from major generation issues such as noticeable artifacts or severe blurring.
+
+Absence of Distortion (3 points)
+Score 3: No visible distortion; structures and objects maintain correct proportions throughout.
+Score 2: Minor distortion or warping is noticeable but does not significantly affect the visual quality.
+Score 1: Some clear distortions are present in localized areas, moderately affecting realism.
+Score 0: Significant distortion or structural issues dominate the image, such as warped shapes or unrealistic geometry.
+
+Total Score: 5 points
+</textarea>
+      </div>
+    </section>
+
+    <!-- Applications -->
+    <section class="section hero is-light" id="applications">
+      <div class="container">
+        <h2 class="title is-3 has-text-centered section-title">Applications</h2>
+        <div class="section-card applications-card--main">
+          <a class="figure-link" href="static/images/application.webp" target="_blank">
+            <img src="static/images/application.webp" alt="StructDiff applications" class="research-image" loading="lazy">
+          </a>
+          <p class="figure-note">
+            StructDiff supports text-guided generation, paint-to-image, editing, harmonization, and outpainting without retraining.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Citation block -->
+    <section class="section" id="BibTeX">
+      <div class="container is-max-desktop content">
+        <div class="bibtex-header">
+          <h2 class="title section-title">BibTeX</h2>
+          <button class="copy-bibtex-btn" onclick="copyBibTeX()" title="Copy BibTeX to clipboard">
+            <i class="fas fa-copy"></i>
+            <span class="copy-text">Copy</span>
+          </button>
+        </div>
+        <pre id="bibtex-code" class="bibtex-box"><code>@article{he2026structdiff,
+  title={StructDiff: A Structure-Preserving and Spatially Controllable Diffusion Model for Single-Image Generation},
+  author={He, Yinxi and Liao, Kang and Lin, Chunyu and Wei, Tianyi and Zhao, Yao},
+  journal={IEEE Transactions on Multimedia},
+  year={2026}
+}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <div class="image-lightbox" id="image-lightbox" aria-hidden="true">
+    <button class="image-lightbox__backdrop" type="button" aria-label="Close image preview"></button>
+    <div class="image-lightbox__dialog" role="dialog" aria-modal="true" aria-label="Enlarged image preview">
+      <div class="image-lightbox__toolbar">
+        <p class="image-lightbox__hint">Use the mouse wheel to zoom, drag to pan, or double-click the image to toggle zoom.</p>
+        <div class="image-lightbox__controls">
+          <button class="image-lightbox__control" type="button" data-lightbox-action="zoom-out" aria-label="Zoom out">-</button>
+          <button class="image-lightbox__control image-lightbox__control--reset" type="button" data-lightbox-action="reset" aria-label="Reset zoom">100%</button>
+          <button class="image-lightbox__control" type="button" data-lightbox-action="zoom-in" aria-label="Zoom in">+</button>
+          <button class="image-lightbox__control" type="button" data-lightbox-action="close" aria-label="Close image preview">&times;</button>
+        </div>
+      </div>
+      <div class="image-lightbox__viewport" id="image-lightbox-viewport">
+        <img class="image-lightbox__image" id="image-lightbox-image" alt="">
+      </div>
+      <p class="image-lightbox__caption" id="image-lightbox-caption"></p>
+    </div>
+  </div>
+
+  <!-- Footer note -->
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content has-text-centered footer-note">
+            <p>
+              This project page is based on the Academic Project Page Template and presents the StructDiff paper together with
+              supplementary evaluation materials.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
